@@ -123,6 +123,19 @@ void MainWindow::update_view() {
         change_brightness(temp_img, &temp_img, v_b);
         change_contrast(temp_img, &temp_img, v_c);
         changed_gamma(temp_img, &temp_img, gamma_val);
+    } else if (index == 3) {
+        std::vector<std::vector<double>> blur_mask = {
+            {1, 1, 1},
+            {1, 1, 1},
+            {1, 1, 1}
+        };
+        // std::vector<std::vector<double>> sharpen_mask = {
+        //     { 0, -1,  0},
+        //     {-1,  5, -1},
+        //     { 0, -1,  0}
+        // };
+
+        apply_convolution(temp_img, &temp_img, blur_mask);
     }
     image = temp_img;
     ui->label->setPixmap(QPixmap::fromImage(image));
@@ -182,11 +195,14 @@ void MainWindow::mode_changed(int index){
         ui->label_2->setText("L");
         ui->label_3->setText("A");
         ui->label_4->setText("B");
-    } else {
+    } else if (index == 2){
         ui->label_2->setText("Brightness");
         ui->label_3->setText("Contrast");
         ui->label_4->setText("Gamma");
+    } else {
+        ui->label_2->setText("");
+        ui->label_3->setText("");
+        ui->label_4->setText("");
     }
-
     update_view();
 }

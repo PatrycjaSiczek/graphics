@@ -1,4 +1,6 @@
 #include "image_algorithm.h"
+#include <vector>
+#include <algorithm>
 
 void change_brightness(const QImage& src, QImage* dst, int dv){
 
@@ -192,6 +194,52 @@ void lab(const QImage &src, QImage *dst, double dL, double da, double db) {
             std::clamp(g, 0.0, 1.0),
             std::clamp(b, 0.0, 1.0)
             ));
+        }
+    }
+}
+
+
+void apply_convolution(const QImage& src, QImage* dst, const std::vector<std::vector<double>>& mask) {
+    if (mask.empty() || mask[0].empty()) return;
+
+    int mask_h = mask.size();
+    int mask_w = mask[0].size();
+    int offset_y = mask_h / 2;
+    int offset_x = mask_w / 2;
+
+    double weight_sum = 0.0;
+    for (int i = 0; i < mask_h; i++) {
+        for (int j = 0; j < mask_w; j++) {
+            weight_sum += mask[i][j];
+        }
+    }
+    if (weight_sum == 0.0) weight_sum = 1.0;
+
+    for (int y = 0; y < src.height(); y++) {
+        uint* dst_line = (uint*)dst->scanLine(y);
+
+        for (int x = 0; x < src.width(); x++) {
+            double r_acc = 0.0, g_acc = 0.0, b_acc = 0.0;
+
+            for (int my = 0; my < mask_h; my++) {
+                for (int mx = 0; mx < mask_w; mx++) {
+                    int py = std::clamp(y + my - offset_y, 0, src.height() - 1);
+                    int px = std::clamp(x + mx - offset_x, 0, src.width() - 1);
+
+                    QRgb p = src.pixel(px, py);
+                    double w = mask[my][mx];
+
+                    r_acc += qRed(p) * w;
+                    g_acc += qGreen(p) * w;
+                    b_acc += qBlue(p) * w;
+                }
+            }
+
+            int final_r = std::clamp((int)(r_acc / weight_sum), 0, 255);
+            int final_g = std::clamp((int)(g_acc / weight_sum), 0, 255);
+            int final_b = std::clamp((int)(b_acc / weight_sum), 0, 255);
+
+            dst_line[x] = qRgba(final_r, final_g, final_b, qAlpha(src.pixel(x, y)));
         }
     }
 }

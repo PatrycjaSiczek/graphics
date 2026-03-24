@@ -176,6 +176,11 @@
       <string>JKG</string>
      </property>
     </item>
+    <item>
+     <property name="text">
+      <string>SPLOT</string>
+     </property>
+    </item>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

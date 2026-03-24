@@ -87,6 +87,7 @@ public:
         comboBox->addItem(QString());
         comboBox->addItem(QString());
         comboBox->addItem(QString());
+        comboBox->addItem(QString());
         comboBox->setObjectName("comboBox");
         comboBox->setGeometry(QRect(30, 70, 82, 28));
         MainWindow->setCentralWidget(centralwidget);
@@ -115,6 +116,7 @@ public:
         comboBox->setItemText(0, QCoreApplication::translate("MainWindow", "HSL", nullptr));
         comboBox->setItemText(1, QCoreApplication::translate("MainWindow", "LAB", nullptr));
         comboBox->setItemText(2, QCoreApplication::translate("MainWindow", "JKG", nullptr));
+        comboBox->setItemText(3, QCoreApplication::translate("MainWindow", "SPLOT", nullptr));
 
     } // retranslateUi
 
